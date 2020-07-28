@@ -15,4 +15,4 @@
   import_tasks: install-debian-package.yml
 
 - name: Add additional functionality to the basic Matomo
-
+  import_tasks: add-extras.yml
