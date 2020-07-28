@@ -1,17 +1,9 @@
 ---
 # tasks file for ansible-role-matomo
 
-- name: Download required roles
-  local_action: command ansible-galaxy install --ignore-errors -r {{ role_path }}/roles/requirements.yml
-  when: not aws_loadbalanced
-
 - name: Configure the Web server
   import_tasks: configure-web-server.yml
   when: matomo_configure_web_server | bool
-
-- name: Get an HTTPS certificate
-  import_tasks: get-https-certificate.yml
-  when: not aws_loadbalanced
 
 - name: Configure the application
   import_tasks: configure-application.yml
@@ -23,4 +15,4 @@
   import_tasks: install-debian-package.yml
 
 - name: Add additional functionality to the basic Matomo
-  import_tasks: add-extras.yml
+
