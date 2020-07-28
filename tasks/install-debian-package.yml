@@ -29,3 +29,9 @@
     cache_valid_time: 3600
     install_recommends: no
   become: true
+  ignore_errors: true
+  register: apt_install_result
+
+- name: output apt result
+  debug:
+    var: apt_install_result
