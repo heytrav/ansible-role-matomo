@@ -15,7 +15,7 @@
 
 - name: Inject the Matomo site's Nginx configuration
   template:
-    src: "matomo.conf.j2"
+    src: "{{ matomo_nginx_template_file }}"
     dest: "{{ matomo_web_config_dir['available'] }}/matomo.conf"
     owner: "root"
     group: "root"

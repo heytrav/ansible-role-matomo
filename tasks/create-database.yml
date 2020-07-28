@@ -1,61 +1,26 @@
 ---
-# Database creator
-
-# https://www.rollnorocks.com/2018/12/ansible-python-and-mysql-untangling-the-mess/
-- name: Install Python's package manager for installing PyMySQL
-  apt:
-    name: python3-pip
-    state: present
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
-
-- name: Install Python's MySQL connector to use Ansbile's MySQL modules
-  pip:
-    name: PyMySQL
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
-
-- name: Create Matomo's MySQL database
-  mysql_db:
-    name: "{{ matomo_db['name'] }}"
-    state: present
-  register: matomo_db_created
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
-
-- name: Fetch the Matomo configuration file containing the database user's password
-  slurp:
-    src: "{{ matomo_path['config'] }}/config.ini.php"
-  register: matomo_db_password_file
-  become: true
-
-- name: Extract the database user's password from the Matomo configuration file
-  set_fact:
-     matomo_db_password: "{{ matomo_db_password_file['content'] | b64decode | regex_findall('password = \"(.+)\"') | first }}"
-
-- name: Create Matomo's database user
-  mysql_user:
-    name: "{{ matomo_db['user'] }}"
-    password: "{{ matomo_db_password }}"
-    state: present
-    priv: "{{ matomo_db['name'] }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER,CREATE\ TEMPORARY\ TABLES,LOCK\ TABLES"
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
 
 - name: Fetch results of the number of tables in the Matomo database
-  command: mysql --user={{ matomo_db['user'] }} --password={{ matomo_db_password }} --skip-column-names {{ matomo_db.name }} --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{{ matomo_db.name }}'"
+  command: >
+    mysql
+    --user={{ matomo_db.user }}
+    --password={{ matomo_db_password }}
+    --host={{ matomo_db.host }}
+    --skip-column-names {{ matomo_db.name }}
+    --execute="SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '{{ matomo_db.name }}'"
   register: matomo_db_tables
   check_mode: no
   changed_when: False
-  delegate_to: "{{ matomo_db_server }}"
+  delegate_to: localhost
 
 - name: Determine if the Matomo database requires an import
   set_fact:
-     matomo_db_import_required: "{{ matomo_db_created.changed or (matomo_db_tables.stdout == '0') }}"
+     matomo_db_import_required: "{{ matomo_db_tables.stdout == '0' }}"
 
 # Follow https://matomo.org/faq/how-to/faq_191/ as native hashing results in inability to login.
 - name: Hash Matomo's superuser administration password
-  command: php -r 'echo password_hash(md5("{{ matomo_superuser_password }}"), PASSWORD_DEFAULT) . "\n";'
+  command: >
+    php -r 'echo password_hash(md5("{{ matomo_superuser_password }}"), PASSWORD_DEFAULT) . "\n";'
   register: matomo_superuser_password_hashed
   when: matomo_db_import_required
 
@@ -68,14 +33,15 @@
     mode: "400"
     force: yes
   when: matomo_db_import_required
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
+  delegate_to: localhost
 
 - name: Import dump file into newly created database
   mysql_db:
-    name: "{{ matomo_db['name'] }}"
+    name: "{{ matomo_db.name }}"
     state: import
     target: "{{ matomo_path['temporary'] }}/matomo.ansible.sql"
+    login_host: "{{ matomo_db.host }}"
+    login_user: "{{ matomo_db.user }}"
+    login_password: "{{ matomo_db_password }}"
   when: matomo_db_import_required
-  become: true
-  delegate_to: "{{ matomo_db_server }}"
+  delegate_to: localhost
