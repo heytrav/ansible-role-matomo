@@ -1,4 +1,7 @@
 ---
+- name: Output matomo db password
+  debug:
+    var: matomo_db_password
 
 - name: Fetch results of the number of tables in the Matomo database
   command: >
