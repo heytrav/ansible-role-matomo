@@ -1,5 +1,7 @@
 ---
 # tasks file for ansible-role-matomo
+- name: Install the Debian package
+  import_tasks: install-debian-package.yml
 
 - name: Configure the Web server
   import_tasks: configure-web-server.yml
@@ -11,8 +13,6 @@
 - name: Create the application's database
   import_tasks: create-database.yml
 
-- name: Install the Debian package
-  import_tasks: install-debian-package.yml
 
 - name: Add additional functionality to the basic Matomo
   import_tasks: add-extras.yml
