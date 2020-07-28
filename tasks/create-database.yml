@@ -44,7 +44,7 @@
     state: import
     target: "{{ matomo_path['temporary'] }}/matomo.ansible.sql"
     login_host: "{{ matomo_db.host }}"
-    login_user: "{{ matomo_db.user }}"
-    login_password: "{{ matomo_db_password }}"
+    login_user: "{{ matomo_db_admin_user }}"
+    login_password: "{{ matomo_db_admin_password }}"
   when: matomo_db_import_required
   delegate_to: localhost
