@@ -23,7 +23,7 @@
 
 - name: "Install Matomo apt package"
   apt:
-    name: matomo
+    name: matomo=3.0.4-1
     state: present
     update_cache: yes
     cache_valid_time: 3600
@@ -31,6 +31,7 @@
   become: true
   ignore_errors: true
   register: apt_install_result
+
 
 - name: output apt result
   debug:
