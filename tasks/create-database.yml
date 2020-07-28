@@ -31,8 +31,8 @@
   template:
     src: "matomo.sql.j2"
     dest: "{{ matomo_path['temporary'] }}/matomo.ansible.sql"
-    owner: "root"
-    group: "root"
+    owner: "{{ lookup('env', 'USER') }}"
+    group: "{{ lookup('env', 'USER') }}"
     mode: "400"
     force: yes
   when: matomo_db_import_required
