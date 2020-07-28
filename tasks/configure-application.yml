@@ -17,14 +17,3 @@
     mode: "preserve"
     force: no
   become: true
-
-
-- name: Slurp in config
-  slurp:
-    src:  "{{ matomo_path['config'] }}/config.ini.php"
-  register: config_ini
-  become: true
-
-- name: output config
-  debug:
-    msg: "{{ config_ini['content'] | b64decode }}"
