@@ -25,7 +25,7 @@
 
 - name: Copy database dump for importing into newly created DB
   template:
-    src: "piwik_matomo.sql.j2"
+    src: "{{ matomo_table_prefix }}matomo.sql.j2"
     dest: "{{ matomo_path['temporary'] }}/matomo.ansible.sql"
     owner: "{{ lookup('env', 'USER') }}"
     group: "{{ lookup('env', 'USER') }}"
