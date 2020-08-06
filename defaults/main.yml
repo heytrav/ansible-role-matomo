@@ -1,6 +1,6 @@
 ---
 # fpm pool defaults
-memory_limit: 256M
+memory_limit: 512M
 max_children: 20
 start_servers: 3
 min_spare_servers: 3

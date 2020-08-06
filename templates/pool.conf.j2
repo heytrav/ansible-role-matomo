@@ -16,3 +16,13 @@ slowlog = /var/log/$pool.log/slow
 request_slowlog_timeout = 15m
 php_flag[display_errors] = on
 php_admin_value[error_log] = /var/log/sitelogs/{{ application }}/{{ project }}/php_error.log
+{% if memory_limit is defined %}
+php_admin_value[memory_limit] = {{ memory_limit }};
+{% endif %}
+{% if upload_max_filesize is defined %}
+php_admin_value[upload_max_filesize] = {{ upload_max_filesize }};
+{% endif %}
+{% if post_max_size is defined %}
+php_admin_value[post_max_size] = {{ post_max_size }};
+{% endif %}
+php_admin_value[max_input_vars] = {{ max_input_vars }}

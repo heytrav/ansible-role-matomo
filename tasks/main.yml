@@ -8,6 +8,14 @@
 - name: Configure the application
   import_tasks: configure-application.yml
 
+- name: replace pool config
+  template:
+    src: pool.conf.j2
+    dest: /etc/php/7.2/fpm/pool.d/www.conf
+    owner: root
+    group: root
+    mode: 0644
+
 - name: Create the application's database
   import_tasks: create-database.yml
 
