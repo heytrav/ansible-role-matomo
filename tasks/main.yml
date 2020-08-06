@@ -18,15 +18,13 @@
 - name: Add additional functionality to the basic Matomo
   import_tasks: add-extras.yml
 
-- name: Remove existing pool config
-  file:
-    path: /etc/php/7.2/fpm/pool.d/www.conf
-    state: absent
+- block:
+  - name: replace pool config
+    template:
+      src: pool.conf.j2
+      dest: /etc/php/7.2/fpm/pool.d/www.conf
+      owner: root
+      group: root
+      mode: 0644
+  become: true
 
-- name: replace pool config
-  template:
-    src: pool.conf.j2
-    dest: /etc/php/7.2/fpm/pool.d/www.conf
-    owner: root
-    group: root
-    mode: 0644
