@@ -1,4 +1,12 @@
 ---
+# fpm pool defaults
+memory_limit: 256M
+max_children: 20
+start_servers: 3
+min_spare_servers: 3
+max_spare_servers: 5
+max_requests: 200
+max_input_vars: 2048
 # defaults file for ansible-role-matomo
 
 # Architecture
