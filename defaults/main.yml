@@ -1,4 +1,6 @@
 ---
+skip_db_create: true
+
 # fpm pool defaults
 memory_limit: 512M
 max_children: 20
