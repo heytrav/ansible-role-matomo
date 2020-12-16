@@ -11,6 +11,7 @@
 
 - name: Create the application's database
   import_tasks: create-database.yml
+  when: not skip_db_create
 
 - name: Install the Debian package
   import_tasks: install-debian-package.yml
